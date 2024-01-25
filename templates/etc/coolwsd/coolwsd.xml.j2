@@ -6,6 +6,8 @@
 {% set _server_name = "" %}
 {% set _network_post_allow = [] %}
 {% set _network_lok_allow = [] %}
+{% set _storage_hosts = [] %}
+{% set _alias_groups = [] %}
 {% if collabora_config.allowed_languages is defined and collabora_config.allowed_languages | count > 0 %}
   {% set _allowed_languages = collabora_config.allowed_languages | join(" ") %}
 {% endif %}
@@ -51,7 +53,7 @@
     <child_root_path desc="Path to the directory under which the chroot jails for the child processes will be created. Should be on the same file system as systemplate and lotemplate. Must be an empty directory." type="path" relative="true" default="jails"></child_root_path>
     <mount_jail_tree desc="Controls whether the systemplate and lotemplate contents are mounted or not, which is much faster than the default of linking/copying each file." type="bool" default="true"></mount_jail_tree>
 
-    <server_name desc="External hostname:port of the server running coolwsd. If empty, it's derived from the request (please set it if this doesn't work). May be specified when behind a reverse-proxy or when the hostname is not reachable directly." type="string" default=""></server_name>
+    <server_name desc="External hostname:port of the server running coolwsd. If empty, it's derived from the request (please set it if this doesn't work). May be specified when behind a reverse-proxy or when the hostname is not reachable directly." type="string" default="">{{ collabora_config.server_name | default('') }}</server_name>
     <file_server_root_path desc="Path to the directory that should be considered root for the file server. This should be the directory containing cool." type="path" relative="true" default="browser/../"></file_server_root_path>
     <hexify_embedded_urls desc="Enable to protect encoded URLs from getting decoded by intermediate hops. Particularly useful on Azure deployments" type="bool" default="false"></hexify_embedded_urls>
     <experimental_features desc="Enable/Disable experimental features" type="bool" default="true">true</experimental_features>
@@ -268,10 +270,9 @@
     </certificates>
 
     <watermark>
-      <opacity desc="Opacity of on-screen watermark from 0.0 to 1.0" type="double" default="0.2"></opacity>
-      <text desc="Watermark text to be displayed on the document if entered" type="string"></text>
+      <opacity desc="Opacity of on-screen watermark from 0.0 to 1.0" type="double" default="0.2">{{ collabora_config.watermark.opacity | default('') }}</opacity>
+      <text desc="Watermark text to be displayed on the document if entered" type="string">{{ collabora_config.watermark.text | default('') }}</text>
     </watermark>
-
 
     <user_interface>
       <mode type="string" desc="Controls the user interface style. The 'default' means: Take the value from ui_defaults, or decide for one of compact or tabbed (default|compact|tabbed)" default="default">default</mode>
@@ -281,12 +282,32 @@
     <storage desc="Backend storage">
         <filesystem allow="false" />
         <wopi desc="Allow/deny wopi storage." allow="true">
-            <max_file_size desc="Maximum document size in bytes to load. 0 for unlimited." type="uint">0</max_file_size>
+            <max_file_size desc="Maximum document size in bytes to load. 0 for unlimited." type="uint">{{ collabora_config.storage.wopi.max_file_size | default('0') }}</max_file_size>
+{% if collabora_config.storage.wopi is defined and collabora_config.storage.wopi | bodsch.core.type == "dict" and
+      collabora_config.storage.wopi.hosts is defined and collabora_config.storage.wopi.hosts | bodsch.core.type == "list" and
+      collabora_config.storage.wopi.hosts | count > 0 %}
+  {% set _storage_hosts = collabora_config.storage.wopi.hosts %}
+{% endif %}
+{% for i in _storage_hosts %}
+  {% set _description = 'Regex pattern of hostname to allow or deny.' %}
+  {% set _descr = i.get('description', None) %}
+  {% set _allow = i.get('allow', True) %}
+  {% set _host = i.get('host', "") %}
+  {% if (_descr is defined and _descr | string | length > 0) %}
+    {% set _description = _descr %}
+  {% endif %}
+  {% if _host | string | length > 0 %}
+        <host desc="{{ _description }}" allow="{{ _allow }}">{{ _host }}</host>
+  {% endif %}
+{% endfor %}
+<!--
+            <host desc="Regex pattern of hostname to allow or deny." allow="true">cloud\.domain1\.de|cloud\.domain2\.de</host>
+-->
             <locking desc="Locking settings">
-                <refresh desc="How frequently we should re-acquire a lock with the storage server, in seconds (default 15 mins) or 0 for no refresh" type="int" default="900">900</refresh>
+                <refresh desc="How frequently we should re-acquire a lock with the storage server, in seconds (default 15 mins) or 0 for no refresh" type="int" default="900">{{ collabora_config.storage.wopi.locking.refresh | default('900') }}</refresh>
             </locking>
 
-            <alias_groups desc="default mode is 'first' it allows only the first host when groups are not defined. set mode to 'groups' and define group to allow multiple host and its aliases" mode="first">
+            <alias_groups desc="default mode is 'first' it allows only the first host when groups are not defined. set mode to 'groups' and define group to allow multiple host and its aliases" mode="{{ collabora_config.storage.wopi.alias_groups.mode | default('first') }}">
             <!-- If you need to use multiple wopi hosts, please change the mode to "groups" and
                     add the hosts below.  If one host is accessible under multiple ip addresses
                     or names, add them as aliases. -->
@@ -297,8 +318,34 @@
 
             </group>-->
             <!-- More "group"s possible here -->
+{% if collabora_config.storage is defined and collabora_config.storage | bodsch.core.type == "dict" and
+      collabora_config.storage.wopi is defined and collabora_config.storage.wopi | bodsch.core.type == "dict" and
+      collabora_config.storage.wopi.alias_groups is defined and collabora_config.storage.wopi.alias_groups | bodsch.core.type == "dict" and
+      collabora_config.storage.wopi.alias_groups.groups is defined and collabora_config.storage.wopi.alias_groups.groups | bodsch.core.type == "list" and
+      collabora_config.storage.wopi.alias_groups.groups | count > 0 %}
+  {% set _alias_groups = collabora_config.storage.wopi.alias_groups.groups %}
+{% endif %}
+{% for i in _alias_groups %}
+                <group>
+  {% set _description = 'Regex pattern of hostname to allow or deny.' %}
+  {% set _descr = i.get('description', None) %}
+  {% set _allow = i.get('allow', True) %}
+  {% set _host = i.get('host', "") %}
+  {% set _aliases = i.get('aliases', []) %}
+  {% if (_descr is defined and _descr | string | length > 0) %}
+    {% set _description = _descr %}
+  {% endif %}
+  {% if _host | string | length > 0 %}
+                    <host desc="{{ _description }}" allow="{{ _allow }}">{{ _host }}</host>
+    {% if _aliases | count > 0 %}
+      {% for alias in _aliases %}
+                    <alias desc="regex pattern of aliasname">{{ alias }}</alias>
+      {% endfor %}
+    {% endif %}
+  {% endif %}
+                </group>
+{% endfor %}
             </alias_groups>
-
         </wopi>
         <ssl desc="SSL settings">
             <as_scheme type="bool" default="true" desc="When set we exclusively use the WOPI URI's scheme to enable SSL for storage">true</as_scheme>

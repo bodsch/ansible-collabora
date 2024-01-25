@@ -162,12 +162,23 @@ collabora_defaults_config:
   storage:
     filesystem:
       allow: false
+    hosts: []
+      #   - description: ""
+      #     allow: ""
+      #     host: ""
     wopi:
       allow: true
       # Maximum document size in bytes to load. 0 for unlimited.
       max_file_size: 0
       locking:
         refresh: 900
+      alias_groups:
+        mode: "first"          # default mode is 'first' /  set mode to 'groups' and define group to allow multiple host
+        groups: []
+      #   - description: ""
+      #     allow: ""
+      #     host: ""
+      #     aliases: []
     ssl:
       # When set we exclusively use the WOPI URI's scheme to enable SSL for storage
       as_schema: true

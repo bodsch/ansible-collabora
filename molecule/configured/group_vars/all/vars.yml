@@ -30,4 +30,23 @@ collabora_config:
     content_security_policy: ""
     connection_timeout_secs: 30
 
+  storage:
+    wopi:
+      # WOPI access
+      alias_groups:
+        mode: "groups"          # default mode is 'first' /  set mode to 'groups' and define group to allow multiple host
+        groups:
+          - description: "Matrix nextcloud (HTTP)"
+            allow: true
+            host: "http://cloud.molecule.lan:80"
+            aliases:
+              - "http://nextcloud.molecule.lan:80"
+          - description: "Matrix nextcloud (HTTPS)"
+            allow: true
+            host: "https://cloud.molecule.lan:443"
+            aliases:
+              - "https://nextcloud.molecule.lan:443"
+              - "https://nextcloud.molecule.local:443"
+              - "https://office.molecule.lan:443"
+              - "https://office.molecule.local:443"
 ...

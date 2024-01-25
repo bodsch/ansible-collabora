@@ -82,28 +82,7 @@ collabora_config:
     # Use theme from the integrator
     use_integration_theme: true
   #
-  storage:
-    filesystem:
-      allow: false
-    wopi:
-      allow: true
-      # Maximum document size in bytes to load. 0 for unlimited.
-      max_file_size: 0
-      locking:
-        refresh: 900
-    ssl:
-      # When set we exclusively use the WOPI URI's scheme to enable SSL for storage
-      as_schema: true
-      # If as_scheme is false or not set, this can be set to force SSL encryption between storage and coolwsd. When empty this defaults to following the ssl.enable setting
-      enable:
-      # Path to the cert file
-      cert_file: /etc/coolwsd/cert.pem
-      # Path to the key file
-      key_file: /etc/coolwsd/key.pem
-      # Path to the ca file. If this is not empty, then SSL verification will be strict, otherwise cert of storage (WOPI-like host) will not be verified.
-      ca_file: /etc/coolwsd/ca-chain.cert.pem
-      # List of OpenSSL ciphers to accept. If empty the defaults are used. These can be overridden only if absolutely needed.
-      cipher_list: []
+  storage: {}
   #
   admin_console: {}
 ```
@@ -140,6 +119,31 @@ collabora_config:
     userstats: false
 ```
 
+### `collabora_config.storage`
+
+```yaml
+collabora_config:
+
+  storage:
+    hosts: []
+      #   - description: ""
+      #     allow: ""
+      #     host: ""
+    wopi:
+      allow: true
+      # Maximum document size in bytes to load. 0 for unlimited.
+      max_file_size: 0
+      locking:
+        refresh: 900
+      alias_groups:
+        # default mode is 'first' /  set mode to 'groups' and define group to allow multiple host
+        mode: "first"          
+        groups: []
+      #   - description: ""
+      #     allow: ""
+      #     host: ""
+      #     aliases: []
+```
 
 ### `collabora_config.network`
 
