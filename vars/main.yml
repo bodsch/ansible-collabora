@@ -17,6 +17,7 @@ collabora_dependencies:
   - unzip
   - tar
   - bzip2
+  - gpg
 
 collabora_python_packages:
   # - name: mysqlclient
