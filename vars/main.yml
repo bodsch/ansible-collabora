@@ -45,11 +45,37 @@ collabora_defaults_service:
 collabora_defaults_config:
   # The languages allowed.
   allowed_languages: []
-  fetch_update_check: ""                      # hours
+
   cache_path: /var/cache/loolwsd
   # You can manage the mounting feature. Either "false" or "true". (As a string.)
   mount_jail_tree: "true"
+
+  # Remote API settings for spell and grammar checking
+  languagetool:
+    enable: false
+    base_url: ""
+    user_name: ""
+    api_key:
+    ssl_verification:
+    rest_protocol: ""
+
+  # DeepL API settings for translation service
+  deepl:
+    enable: false
+    api_url: ""
+    auth_key: ""
+
+  # External hostname:port of the server running coolwsd
   server_name: ""
+  # Enable/Disable experimental features
+  experimental_features: true
+  # The maximum percentage of available memory consumed by all of the Collabora Online processes
+  memproportion: "80.0"
+  # Number of child processes to keep started in advance and waiting for new clients
+  num_prespawn_children: "1"
+  # Every number of hours will fetch latest version data
+  fetch_update_check: "10"                      # hours
+
   logging:
     color: true
     # Set the log level. Can be 0 through 8, none or "fatal", "critical", "error",
@@ -72,7 +98,7 @@ collabora_defaults_config:
 
     anonymize:
       user_data: true
-      salt: ""
+      salt: ""                                    # A secret 64-bit random number (default: 82589933)
     docstats: false
     userstats: false
   #

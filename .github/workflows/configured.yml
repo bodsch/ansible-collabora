@@ -1,5 +1,5 @@
 ---
-name: collabora with sqlite and custom config
+name: collabora with custom config
 
 on:
   workflow_dispatch:
