@@ -142,4 +142,22 @@
         owner: root
         group: root
         mode: 0750
+
+- name: TLS support
+  when:
+    - collabora_config | support_tls
+  block:
+    - name: copy certificates
+      become: true
+      collabora_tls_certificates:
+        source:
+          ssl_cert: "{{ collabora_tls_certificate.source_files.cert | default(omit) }}"
+          ssl_key: "{{ collabora_tls_certificate.source_files.key | default(omit) }}"
+          ssl_ca: "{{ collabora_tls_certificate.source_files.ca | default(omit) }}"
+        destination: "{{ collabora_config | tls_directory }}"
+        owner: cool
+        group: cool
+      notify:
+        - restart service
+
 ...

@@ -6,4 +6,10 @@ collabora_service: {}
 
 collabora_config: {}
 
+collabora_tls_certificate:
+  source_files:
+    cert: ""
+    ca: ""
+    key: ""
+
 ...
