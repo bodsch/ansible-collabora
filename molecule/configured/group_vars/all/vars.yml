@@ -1,6 +1,30 @@
 ---
 
+collabora_service:
+  #pidfile: ""
+  #port: ""
+  disable_ssl: false
+  disable_cool_user_checking: false
+  # defaults:
+  # sys_template_path=/opt/cool/systemplate
+  # child_root_path=/opt/cool/child-roots
+  # file_server_root_path=/usr/share/coolwsd
+  # overrides:
+  #   sys_template_path: /opt/cool/systemplate
+  #   child_root_path: /opt/cool/child-roots
+  #   file_server_root_path: /usr/share/coolwsd
+  # config_file: ""
+  # config_dir: ""
+  # lo_template_path: ""
+
+collabora_tls_certificate:
+  source_files:
+    cert: "/etc/snakeoil/molecule.lan/molecule.lan.pem"
+    ca: "/etc/snakeoil/molecule.lan/molecule.lan.pem"
+    key: "/etc/snakeoil/molecule.lan/molecule.lan.key"
+
 collabora_config:
+  server_name: office.molecule.lan
   allowed_languages:
     - "de_DE"
     - "en_GB"
@@ -8,9 +32,9 @@ collabora_config:
 
   network:
     # Protocol to use IPv4, IPv6 or all for both
-    proto: IPv4
+    proto: all
     # Listen address that coolwsd binds to. Can be 'any' or 'loopback'.
-    listen: loopback
+    listen: any
     # Allow/deny client IP address for POST(REST).
     post_allow:
       hosts: []
@@ -29,6 +53,30 @@ collabora_config:
         #   network: 'localhost'
     content_security_policy: ""
     connection_timeout_secs: 30
+
+  logging:
+    color: false
+    # Set the log level. Can be 0 through 8, none or "fatal", "critical", "error",
+    # "warning", "notice", "information", "debug", "trace".
+    level: notice
+    startup: debug
+
+    anonymize:
+      user_data: false
+    docstats: false
+    userstats: false
+
+  ssl:
+    # Controls whether SSL encryption between coolwsd and the network is enabled (do not disable for production deployment).
+    # If default is false, must first be compiled with SSL support to enable.
+    enabled: true
+    # Connection via proxy where coolwsd acts as working via https, but actually uses http.
+    termination: true
+    # These settings become relevant when `collabora_ssl_enabled` is set to
+    # `yes`.
+    cert_file: /etc/coolwsd/molecule.lan.pem
+    key_file: /etc/coolwsd/molecule.lan.key
+    ca_file: /etc/coolwsd/molecule.lan.pem
 
   storage:
     wopi:
@@ -49,4 +97,5 @@ collabora_config:
               - "https://nextcloud.molecule.local:443"
               - "https://office.molecule.lan:443"
               - "https://office.molecule.local:443"
+
 ...
