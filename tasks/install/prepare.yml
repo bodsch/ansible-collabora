@@ -67,6 +67,8 @@
   ansible.builtin.package:
     name: "{{ collabora_dependencies | union(collabora_os_dependencies) }}"
     state: present
+  when:
+    - collabora_dependencies | count > 0 or collabora_os_dependencies | count > 0
 
 - name: get latest system information
   ansible.builtin.setup:

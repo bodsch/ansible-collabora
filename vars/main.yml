@@ -13,6 +13,7 @@ collabora_cache_directory: /var/cache/ansible/collabora
 collabora_remote_tmp_directory: "{{ collabora_cache_directory }}/{{ collabora_version }}"
 
 collabora_os_dependencies: []
+
 collabora_dependencies:
   - unzip
   - tar

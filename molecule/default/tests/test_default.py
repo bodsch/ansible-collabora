@@ -114,7 +114,11 @@ def test_directories(host, get_vars):
         "/opt/cool/systemplate",
         "/opt/cool/child-roots",
         "/etc/coolwsd",
-        "/usr/share/coolwsd"
+        "/usr/share/coolwsd",
+        "/opt/collaboraoffice",
+        "/opt/collaboraoffice/program",
+        "/opt/collaboraoffice/presets",
+        "/opt/collaboraoffice/share",
     ]
 
     for _dir in dirs:
@@ -125,7 +129,13 @@ def test_directories(host, get_vars):
 def test_files(host, get_vars):
 
     files = [
+        "/etc/default/coolwsd",
         "/etc/coolwsd/coolwsd.xml",
+        "/lib/systemd/system/coolwsd.service",
+        "/opt/collaboraoffice/NOTICE",
+        "/opt/collaboraoffice/program/oosplash",
+        "/opt/collaboraoffice/presets/config/autotbl.fmt",
+        "/opt/collaboraoffice/share/config/wizard/form/styles/water.css",
     ]
 
     for _file in files:

@@ -1,4 +1,7 @@
-# python 3 headers, required if submitting to Ansible
+#!/usr/bin/python3
+# -*- coding: utf-8 -*-
+
+# (c) 2022-2024, Bodo Schulz <bodo@boone-schulz.de>
 
 from __future__ import (absolute_import, print_function)
 __metaclass__ = type

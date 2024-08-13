@@ -22,7 +22,9 @@
       bodsch.core.aur:
         state: present
         name: collabora
-        repository: https://aur.archlinux.org/collabora-online-server-nodocker.git
+        repository: https://github.com/bodsch/aur-collabora-online-server.git
+      async: 3200
+      poll: 10
       register: _collabora_installed
 
     # - name: uninstall build essentials
@@ -64,6 +66,16 @@
       ansible.builtin.file:
         path: /usr/sbin/policy-rc.d
         state: absent
+
+- name: define collabora version
+  collabora_version:
+  register: _version
+
+- name: create custom fact file
+  bodsch.core.facts:
+    name: collabora_office
+    facts:
+      version: "{{ _version.version }}"
 
 - name: define collabora user
   ansible.builtin.set_fact:
