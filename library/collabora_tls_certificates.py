@@ -31,8 +31,8 @@ class CollaboraTLSCertificates(object):
         self.group = module.params.get("group")
 
         self.ssl_cert = self.source.get("ssl_cert", None)
-        self.ssl_key  = self.source.get("ssl_key", None)
-        self.ssl_ca   = self.source.get("ssl_ca", None)
+        self.ssl_key = self.source.get("ssl_key", None)
+        self.ssl_ca = self.source.get("ssl_ca", None)
 
         self.ssl_files = []
         if self.ssl_cert:
