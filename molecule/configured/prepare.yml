@@ -35,6 +35,12 @@
       when:
         - ansible_os_family | lower == 'debian'
 
+    - name: make sure iproute2 is installed
+      ansible.builtin.package:
+        name:
+          - iproute2
+        state: present
+
     - name: update package cache
       become: true
       ansible.builtin.package:
