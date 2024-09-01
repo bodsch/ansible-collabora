@@ -3,46 +3,15 @@
 #- name: check installed
 #  ansible.builtin.include_tasks: check_installed.yml
 
+- name: d
+  debug:
+    msg: "{{ collabora_arch }}"
+
 - name: based on arch linux
   when:
     - ansible_os_family | lower == 'archlinux'
-  block:
-    - name: install build essentials
-      ansible.builtin.package:
-        name:
-          - make
-          #- bison
-          #- flex
-          - diffutils
-        state: present
-
-    - name: install collabora package via aur
-      become: true
-      become_user: aur_builder
-      bodsch.core.aur:
-        state: present
-        name: collabora
-        repository: https://github.com/bodsch/aur-collabora-online-server.git
-      async: 3200
-      poll: 10
-      register: _collabora_installed
-
-    # - name: uninstall build essentials
-    #   ansible.builtin.package:
-    #     name:
-    #       - make
-    #       - bison
-    #       - flex
-    #       - diffutils
-    #     state: absent
-
-    # - name: install openrc init script
-    #   ansible.builtin.template:
-    #     src: etc/init/openrc/collabora.j2
-    #     dest: /etc/init.d/collabora
-    #     mode: 0755
-    #   when:
-    #     - ansible_service_mgr | lower == "openrc"
+    - collabora_arch.install_type in ["source", "archive", "repository"]
+  ansible.builtin.include_tasks: "install/archlinux/{{ collabora_arch.install_type }}.yml"
 
 - name: not based on arch linux
   when:
@@ -54,7 +23,7 @@
         content: |
           #!/bin/sh
           exit 101
-        mode: 0755
+        mode: "0755"
 
     - name: install collabora packages
       ansible.builtin.package:
@@ -153,7 +122,7 @@
         dest: "/etc/init.d/coolwsd"
         owner: root
         group: root
-        mode: 0750
+        mode: "0750"
 
 - name: TLS support
   when:

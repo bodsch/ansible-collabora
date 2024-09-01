@@ -26,39 +26,6 @@
         state: present
         update_cache: true
 
-- name: based on arch linux
-  when:
-    - ansible_os_family | lower == 'archlinux'
-  block:
-    - name: install build tools
-      ansible.builtin.package:
-        name:
-          - base-devel
-          - bison
-          - cmake
-          - diffutils
-          - fakeroot
-          - flex
-          - make
-          - patch
-        state: present
-
-    - name: create sudo rules for aur_builder
-      ansible.builtin.copy:
-        content: '%aur_builder ALL=(ALL) NOPASSWD: ALL'
-        dest: /etc/sudoers.d/aur
-        mode: 0640
-        validate: visudo -cf %s
-
-    - name: create build group
-      ansible.builtin.group:
-        name: aur_builder
-
-    - name: create build user
-      ansible.builtin.user:
-        name: aur_builder
-        group: aur_builder
-
 - name: update package cache
   ansible.builtin.package:
     update_cache: true

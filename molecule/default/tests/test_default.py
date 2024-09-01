@@ -104,7 +104,7 @@ def local_facts(host):
     """
       return local facts
     """
-    return host.ansible("setup").get("ansible_facts").get("ansible_local").get("nextcloud")
+    return host.ansible("setup").get("ansible_facts").get("ansible_local").get("collabora_office")
 
 
 def test_directories(host, get_vars):
@@ -132,6 +132,7 @@ def test_files(host, get_vars):
         "/etc/default/coolwsd",
         "/etc/coolwsd/coolwsd.xml",
         "/lib/systemd/system/coolwsd.service",
+        "/etc/systemd/system/multi-user.target.wants/coolwsd.service",
         "/opt/collaboraoffice/NOTICE",
         "/opt/collaboraoffice/program/oosplash",
         "/opt/collaboraoffice/presets/config/autotbl.fmt",
@@ -141,3 +142,32 @@ def test_files(host, get_vars):
     for _file in files:
         f = host.file(_file)
         assert f.is_file
+
+
+def test_user(host, get_vars):
+    """
+    """
+    user = "cool"
+    group = "cool"
+
+    assert host.group(group).exists
+    assert host.user(user).exists
+    assert group in host.user(user).groups
+
+
+def test_service(host):
+    service = host.service("coolwsd")
+    assert service.is_enabled
+    assert service.is_running
+
+
+def test_open_port(host, get_vars):
+    """
+    """
+    for i in host.socket.get_listening_sockets():
+        print(i)
+
+    pp_json(get_vars)
+
+    service = host.socket("tcp://127.0.0.1:9980")
+    assert service.is_listening
